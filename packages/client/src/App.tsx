@@ -10,11 +10,45 @@ const client = new QueryClient();
 
 // we need to wrapthis appin a react query context
 const AppContent = () => {
-  const hello = trpc.useQuery(["hello"]);
+  const [user, setUser] = useState("");
+  const [message, setMessage] = useState("");
+  const getMessages = trpc.useQuery(["getMessages"]);
+  const addMessage = trpc.useMutation(["addMessage"]);
+
+  const onAdd = () => {
+    addMessage.mutate(
+      {
+        message,
+        user,
+      },
+      {
+        onSuccess: () => {
+          client.invalidateQueries(["getMessages"]);
+        },
+      }
+    );
+  };
 
   return (
-    <div className="mt-10 text-3xl mx-auto max-w-6xl">
-      <div>{JSON.stringify(hello.data)}</div>
+    <div className="mt-10 text-3xl mx-auto max-w-lg">
+      <div>{JSON.stringify(getMessages.data)}</div>
+      <div className="mt-10">
+        <input
+          type="text"
+          value={user}
+          onChange={(e) => setUser(e.target.value)}
+          className="p-5 border-2 border-gray-400 rounded-lg w-full"
+          placeholder="User"
+        />
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          className="p-5 border-2 border-gray-400 rounded-lg w-full"
+          placeholder="Message"
+        />
+      </div>
+      <button onClick={onAdd}>AddMessage</button>
     </div>
   );
 };
