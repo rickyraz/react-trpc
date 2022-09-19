@@ -5,9 +5,11 @@ import cors from "cors"
 
 const appRouter = trpc.router().query("hello", {
   resolve() {
-    return " Hello World"
+    return " Hello World ii"
   }
 })
+
+export type appRouter = typeof appRouter;
 
 const app = express();
 app.use(cors())
